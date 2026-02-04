@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { useCartStore } from "@/lib/store/cart-store";
 import Image from "next/image";
 import Link from "next/link";
@@ -7,10 +8,12 @@ import Button from "@/components/ui/Button";
 import QuantitySelector from "@/components/ui/QuantitySelector";
 import { Trash2 } from "lucide-react";
 import { formatPrice } from "@/lib/utils";
-import { useRouter } from "next/navigation";
 
 export default function CartPage() {
-  const router = useRouter();
+  const [email, setEmail] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  
   const items = useCartStore((state) => state.items);
   const updateQuantity = useCartStore((state) => state.updateQuantity);
   const removeItem = useCartStore((state) => state.removeItem);
@@ -18,9 +21,45 @@ export default function CartPage() {
 
   const total = getTotalPrice();
 
-  const handleCheckout = () => {
+  const handleCheckout = async () => {
     if (items.length === 0) return;
-    router.push("/checkout");
+    
+    // Validate email
+    if (!email || !email.includes("@")) {
+      setError("Please enter a valid email address");
+      return;
+    }
+
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const response = await fetch("/api/checkout", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          items,
+          email,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to create checkout session");
+      }
+
+      // Redirect to Stripe Checkout
+      if (data.url) {
+        window.location.href = data.url;
+      }
+    } catch (err) {
+      console.error("Checkout error:", err);
+      setError(err instanceof Error ? err.message : "Failed to start checkout");
+      setIsLoading(false);
+    }
   };
 
   if (items.length === 0) {
@@ -144,12 +183,35 @@ export default function CartPage() {
               </div>
             </div>
 
+            {/* Email Input */}
+            <div className="mb-6">
+              <label htmlFor="email" className="block text-sm font-medium mb-2 uppercase">
+                Email
+              </label>
+              <input
+                type="email"
+                id="email"
+                value={email}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                  setError(null);
+                }}
+                placeholder="your@email.com"
+                className="w-full px-4 py-2 border-2 border-black focus:outline-none focus:ring-2 focus:ring-black"
+                required
+              />
+              {error && (
+                <p className="text-red-600 text-sm mt-2">{error}</p>
+              )}
+            </div>
+
             <Button
               onClick={handleCheckout}
               size="lg"
               className="w-full border-2 border-black"
+              disabled={isLoading || items.length === 0}
             >
-              CHECKOUT
+              {isLoading ? "PROCESSING..." : "CHECKOUT"}
             </Button>
 
             <Link href="/shop" className="block mt-4 text-center text-sm underline">

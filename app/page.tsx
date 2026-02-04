@@ -18,7 +18,7 @@ export default function Home() {
             {/* Placeholder for product image - replace with actual image */}
             <div className="w-full h-full flex items-center justify-center text-gray-400">
               <p className="text-lg">Product Image</p>
-            </div>
+        </div>
             {/* Uncomment when you have the actual image:
             <Image
               src="/images/hero-hat.jpg"
