@@ -12,19 +12,32 @@ interface ProductCardProps {
 export default function ProductCard({ product }: ProductCardProps) {
   const displayPrice = product.salePrice ?? product.price;
   const hasSale = product.salePrice !== null;
+  const coverUrl = Array.isArray(product.images) && product.images.length > 0 ? product.images[0] : null;
+  const hoverUrl = Array.isArray(product.images) && product.images.length > 1 ? product.images[1] : null;
 
   return (
     <Link href={`/shop/${product.slug}`} className="group">
       <div className="flex flex-col">
-        {/* Product Image */}
+        {/* Product Image: cover by default, hover image on hover */}
         <div className="relative w-full aspect-square border border-black mb-4 overflow-hidden bg-gray-100">
-          {product.images.length > 0 ? (
-            <Image
-              src={product.images[0]}
-              alt={product.name}
-              fill
-              className="object-cover group-hover:scale-105 transition-transform duration-300"
-            />
+          {coverUrl ? (
+            <>
+              <Image
+                src={coverUrl}
+                alt={product.name}
+                fill
+                className="object-cover group-hover:scale-105 transition-transform duration-300"
+              />
+              {hoverUrl && (
+                <Image
+                  src={hoverUrl}
+                  alt={product.name}
+                  fill
+                  className="object-cover opacity-0 group-hover:opacity-100 transition-opacity duration-300 absolute inset-0"
+                  aria-hidden
+                />
+              )}
+            </>
           ) : (
             <div className="w-full h-full flex items-center justify-center text-gray-400">
               <p>No Image</p>

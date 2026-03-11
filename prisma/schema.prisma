@@ -18,8 +18,9 @@ model Product {
   description String?
   price       Decimal  @db.Decimal(10, 2)
   salePrice   Decimal? @db.Decimal(10, 2)
-  images      String[] // Array of image URLs
-  category    String?
+  images         String[] // Array of image URLs (first = cover, second = hover, rest = gallery)
+  variantImages  Json?    // Optional: { "variantValue": "imageUrl" } for variant-specific images
+  category       String?
   inStock     Boolean  @default(true)
   stockQty    Int      @default(0)
   variants    ProductVariant[]

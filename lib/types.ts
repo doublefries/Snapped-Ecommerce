@@ -18,6 +18,7 @@ export type Product = {
   price: number;
   salePrice: number | null;
   images: string[];
+  variantImages?: Record<string, string> | null; // variant value -> image URL
   category: string | null;
   inStock: boolean;
   stockQty: number;

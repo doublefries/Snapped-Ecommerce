@@ -8,14 +8,22 @@ import AddToCartButton from "./AddToCartButton";
 
 interface ProductDetailClientProps {
   product: Product;
+  selectedVariantValue?: string | null;
+  onSelectVariant?: (value: string) => void;
 }
 
 export default function ProductDetailClient({
   product,
+  selectedVariantValue: controlledVariant,
+  onSelectVariant,
 }: ProductDetailClientProps) {
-  const [selectedVariantValue, setSelectedVariantValue] = useState<string | null>(
+  const [internalVariant, setInternalVariant] = useState<string | null>(
     product.variants.length > 0 ? product.variants[0].value : null
   );
+  const selectedVariantValue =
+    controlledVariant !== undefined ? controlledVariant : internalVariant;
+  const setSelectedVariantValue =
+    onSelectVariant ?? setInternalVariant;
   const [quantity, setQuantity] = useState(1);
 
   const selectedVariant: ProductVariant | null =

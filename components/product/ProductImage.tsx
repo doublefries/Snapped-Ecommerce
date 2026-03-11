@@ -1,16 +1,24 @@
 "use client";
 
-import { useState } from "react";
 import Image from "next/image";
 
 interface ProductImageProps {
   images: string[];
   productName: string;
+  variantImages?: Record<string, string> | null;
+  selectedVariantValue?: string | null;
+  selectedImageIndex: number;
+  onSelectImageIndex: (index: number) => void;
 }
 
-export default function ProductImage({ images, productName }: ProductImageProps) {
-  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
-
+export default function ProductImage({
+  images,
+  productName,
+  variantImages,
+  selectedVariantValue,
+  selectedImageIndex,
+  onSelectImageIndex,
+}: ProductImageProps) {
   if (images.length === 0) {
     return (
       <div className="w-full aspect-square border border-black bg-gray-100 flex items-center justify-center">
@@ -19,13 +27,18 @@ export default function ProductImage({ images, productName }: ProductImageProps)
     );
   }
 
+  const mainImageUrl =
+    selectedVariantValue && variantImages?.[selectedVariantValue]
+      ? variantImages[selectedVariantValue]
+      : images[selectedImageIndex];
+
   return (
     <div className="flex flex-col gap-4">
       {/* Main Image */}
       <div className="relative w-full aspect-square border border-black overflow-hidden bg-gray-100">
         <Image
-          src={images[selectedImageIndex]}
-          alt={`${productName} - Image ${selectedImageIndex + 1}`}
+          src={mainImageUrl}
+          alt={productName}
           fill
           className="object-cover"
           priority
@@ -34,15 +47,13 @@ export default function ProductImage({ images, productName }: ProductImageProps)
 
       {/* Thumbnail Navigation */}
       {images.length > 1 && (
-        <div className="flex gap-2">
+        <div className="flex gap-2 flex-wrap">
           {images.map((image, index) => (
             <button
               key={index}
-              onClick={() => setSelectedImageIndex(index)}
+              onClick={() => onSelectImageIndex(index)}
               className={`relative w-16 h-16 border-2 flex-shrink-0 ${
-                selectedImageIndex === index
-                  ? "border-black"
-                  : "border-gray-300"
+                mainImageUrl === image ? "border-black" : "border-gray-300"
               }`}
               aria-label={`View image ${index + 1}`}
             >
