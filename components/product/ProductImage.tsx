@@ -31,6 +31,7 @@ export default function ProductImage({
     selectedVariantValue && variantImages?.[selectedVariantValue]
       ? variantImages[selectedVariantValue]
       : images[selectedImageIndex];
+  const mainUnoptimized = /^https?:\/\//.test(mainImageUrl);
 
   return (
     <div className="flex flex-col gap-4">
@@ -42,6 +43,9 @@ export default function ProductImage({
           fill
           className="object-cover"
           priority
+          sizes="(min-width: 1024px) 50vw, 100vw"
+          quality={85}
+          unoptimized={mainUnoptimized}
         />
       </div>
 
@@ -62,6 +66,9 @@ export default function ProductImage({
                 alt={`${productName} thumbnail ${index + 1}`}
                 fill
                 className="object-cover"
+                sizes="64px"
+                quality={60}
+                unoptimized={/^https?:\/\//.test(image)}
               />
             </button>
           ))}

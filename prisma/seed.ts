@@ -9,7 +9,13 @@ const storageBase = supabaseUrl
   : null;
 
 function supabaseImage(folder: string, filename: string): string {
-  if (storageBase) return `${storageBase}/${folder}/${filename}`;
+  if (storageBase) {
+    // Use Supabase image renderer so the browser downloads resized images (faster).
+    // This avoids Next.js image optimizer having to fetch the original upstream.
+    const objectPath = `${folder}/${filename}`;
+    const renderBase = `${supabaseUrl}/storage/v1/render/image/public/product-images`;
+    return `${renderBase}/${objectPath}?width=1600&quality=80`;
+  }
   return `https://via.placeholder.com/800x800?text=${encodeURIComponent(filename)}`;
 }
 
@@ -26,6 +32,10 @@ async function main() {
       images: [
         supabaseImage("hoodies", "cover-purple-embossed.png"),
         supabaseImage("hoodies", "forestgreen-embossed.JPG"),
+        // Include variant-focused images in gallery thumbnails
+        supabaseImage("hoodies", "banner-blue.png"),
+        supabaseImage("hoodies", "pink-embossed.jpg"),
+        supabaseImage("hoodies", "purple-embossed.png"),
       ],
       variantImages: {
         green: supabaseImage("hoodies", "forestgreen-embossed.JPG"),
@@ -138,6 +148,11 @@ async function main() {
       update: {
         images: productData.images,
         variantImages: variantImages === null ? null : variantImages,
+        variants: {
+          // Reseeding should sync variants for existing products too
+          deleteMany: {},
+          create: variants,
+        },
       },
       create: {
         ...productInfo,

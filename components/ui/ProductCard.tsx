@@ -14,6 +14,8 @@ export default function ProductCard({ product }: ProductCardProps) {
   const hasSale = product.salePrice !== null;
   const coverUrl = Array.isArray(product.images) && product.images.length > 0 ? product.images[0] : null;
   const hoverUrl = Array.isArray(product.images) && product.images.length > 1 ? product.images[1] : null;
+  const coverUnoptimized = !!coverUrl && /^https?:\/\//.test(coverUrl);
+  const hoverUnoptimized = !!hoverUrl && /^https?:\/\//.test(hoverUrl);
 
   return (
     <Link href={`/shop/${product.slug}`} className="group">
@@ -27,6 +29,9 @@ export default function ProductCard({ product }: ProductCardProps) {
                 alt={product.name}
                 fill
                 className="object-cover group-hover:scale-105 transition-transform duration-300"
+                sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+                quality={80}
+                unoptimized={coverUnoptimized}
               />
               {hoverUrl && (
                 <Image
@@ -35,6 +40,9 @@ export default function ProductCard({ product }: ProductCardProps) {
                   fill
                   className="object-cover opacity-0 group-hover:opacity-100 transition-opacity duration-300 absolute inset-0"
                   aria-hidden
+                  sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+                  quality={80}
+                  unoptimized={hoverUnoptimized}
                 />
               )}
             </>
