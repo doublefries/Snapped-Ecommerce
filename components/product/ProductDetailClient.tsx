@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Product, ProductVariant } from "@/lib/types";
 import ColorSelector from "./ColorSelector";
+import SizeSelector from "./SizeSelector";
 import QuantitySelector from "@/components/ui/QuantitySelector";
 import AddToCartButton from "./AddToCartButton";
 
@@ -25,6 +26,7 @@ export default function ProductDetailClient({
   const setSelectedVariantValue =
     onSelectVariant ?? setInternalVariant;
   const [quantity, setQuantity] = useState(1);
+  const [selectedSize, setSelectedSize] = useState<string | null>(null);
 
   const selectedVariant: ProductVariant | null =
     selectedVariantValue
@@ -46,6 +48,15 @@ export default function ProductDetailClient({
         />
       )}
 
+      {/* Size Selector (hoodies only for now) */}
+      {product.slug === "embossed-hoodie-2-0" && (
+        <SizeSelector
+          sizes={["S", "M", "L", "XL"]}
+          selectedSize={selectedSize}
+          onSelect={setSelectedSize}
+        />
+      )}
+
       {/* Quantity Selector */}
       <QuantitySelector
         quantity={quantity}
@@ -59,19 +70,9 @@ export default function ProductDetailClient({
         product={product}
         selectedVariant={selectedVariant}
         quantity={quantity}
+        selectedSize={selectedSize}
       />
 
-      {/* Product Features */}
-      {product.variants.length > 0 && (
-        <div className="mt-4 space-y-2">
-          <p className="text-sm text-gray-600">
-            - 100% ACRYLIC BEANIE
-          </p>
-          <p className="text-sm text-gray-600">
-            - WOVEN PATCH WITH OUR ICONIC SNAPPED LOGO
-          </p>
-        </div>
-      )}
     </div>
   );
 }

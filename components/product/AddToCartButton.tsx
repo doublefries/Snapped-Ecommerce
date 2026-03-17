@@ -10,12 +10,14 @@ interface AddToCartButtonProps {
   product: Product;
   selectedVariant: ProductVariant | null;
   quantity: number;
+  selectedSize?: string | null;
 }
 
 export default function AddToCartButton({
   product,
   selectedVariant,
   quantity,
+  selectedSize,
 }: AddToCartButtonProps) {
   const [isAdding, setIsAdding] = useState(false);
   const addItem = useCartStore((state) => state.addItem);
@@ -27,16 +29,24 @@ export default function AddToCartButton({
       return;
     }
 
+    if (product.slug === "embossed-hoodie-2-0" && !selectedSize) {
+      alert("Please select a size");
+      return;
+    }
+
     setIsAdding(true);
 
     // Generate unique cart item ID
-    const cartItemId = `${product.id}-${selectedVariant?.value || "default"}`;
+    const cartItemId = `${product.id}-${selectedVariant?.value || "default"}-${
+      selectedSize || "nosize"
+    }`;
 
     addItem({
       id: cartItemId,
       productId: product.id,
       productName: product.name,
       variantName: selectedVariant?.name,
+      size: selectedSize || undefined,
       price: Number(product.salePrice ?? product.price),
       quantity,
       image: product.images[0] || "",

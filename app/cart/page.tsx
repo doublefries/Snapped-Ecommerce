@@ -113,6 +113,9 @@ export default function CartPage() {
                   {item.variantName && (
                     <p className="text-sm text-gray-600">Color: {item.variantName}</p>
                   )}
+                  {item.size && (
+                    <p className="text-sm text-gray-600">Size: {item.size}</p>
+                  )}
                   <p className="text-lg font-bold mt-2">
                     {formatPrice(item.price)}
                   </p>

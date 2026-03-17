@@ -13,7 +13,8 @@ const nextConfig: NextConfig = {
             {
               protocol: "https" as const,
               hostname: supabaseHost,
-              pathname: "/storage/v1/object/public/**",
+              // Allow both object and render endpoints for public storage
+              pathname: "/storage/v1/**",
             },
           ]
         : []),

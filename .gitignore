@@ -43,3 +43,6 @@ next-env.d.ts
 
 # prisma
 /prisma/migrations
+
+# Product images live in Supabase Storage only (not in repo)
+/public/product-images/
