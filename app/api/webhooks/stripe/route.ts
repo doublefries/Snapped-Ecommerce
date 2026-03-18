@@ -63,17 +63,31 @@ export async function POST(request: NextRequest) {
           email: session.customer_email || session.customer_details?.email || "",
           total: total,
           status: "PAID",
-          shippingAddress: session.shipping_details
+          shippingAddress: session.customer_details?.address
             ? {
-                name: session.shipping_details.name,
-                address: session.shipping_details.address,
+                name: session.customer_details.name,
+                address: {
+                  line1: session.customer_details.address.line1,
+                  line2: session.customer_details.address.line2,
+                  city: session.customer_details.address.city,
+                  state: session.customer_details.address.state,
+                  postal_code: session.customer_details.address.postal_code,
+                  country: session.customer_details.address.country,
+                },
               }
-            : null,
+            : undefined,
           items: {
             create: cartItems.map((item) => ({
               productId: item.productId,
               productName: item.productName,
-              variantName: item.variantName || null,
+              variantName:
+                item.colorName && item.colorValue !== "default"
+                  ? item.sizeName && item.sizeValue !== "os"
+                    ? `${item.colorName} / ${item.sizeName}`
+                    : item.colorName
+                  : item.sizeName && item.sizeValue !== "os"
+                    ? item.sizeName
+                    : null,
               quantity: item.quantity,
               price: item.price,
             })),
@@ -96,26 +110,16 @@ export async function POST(request: NextRequest) {
           },
         });
 
-        // If item has a variant, update variant stock
-        if (item.variantName) {
-          // Find variant by product ID and variant name
-          const variant = await prisma.productVariant.findFirst({
-            where: {
-              productId: item.productId,
-              name: item.variantName,
+        // If item has a selected variant, update variant stock (color+size combo)
+        if (item.variantId) {
+          await prisma.productVariant.update({
+            where: { id: item.variantId },
+            data: {
+              stockQty: {
+                decrement: item.quantity,
+              },
             },
           });
-
-          if (variant) {
-            await prisma.productVariant.update({
-              where: { id: variant.id },
-              data: {
-                stockQty: {
-                  decrement: item.quantity,
-                },
-              },
-            });
-          }
         }
       }
 

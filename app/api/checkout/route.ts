@@ -55,9 +55,14 @@ export async function POST(request: NextRequest) {
             currency: "cad",
             product_data: {
               name: product.name,
-              description: item.variantName
-                ? `${product.name} - ${item.variantName}`
-                : product.name,
+              description:
+                item.colorName && item.colorValue !== "default"
+                  ? item.sizeName && item.sizeValue !== "os"
+                    ? `${product.name} - ${item.colorName} / ${item.sizeName}`
+                    : `${product.name} - ${item.colorName}`
+                  : item.sizeName && item.sizeValue !== "os"
+                    ? `${product.name} - ${item.sizeName}`
+                    : product.name,
               images,
             },
             unit_amount: Math.round(price * 100), // Convert to cents

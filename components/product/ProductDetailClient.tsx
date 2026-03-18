@@ -18,20 +18,50 @@ export default function ProductDetailClient({
   selectedVariantValue: controlledVariant,
   onSelectVariant,
 }: ProductDetailClientProps) {
-  const [internalVariant, setInternalVariant] = useState<string | null>(
-    product.variants.length > 0 ? product.variants[0].value : null
+  const variants = product.variants;
+
+  const colorOptions = Array.from(
+    new Set(variants.map((v) => v.colorValue).filter((v) => v !== "default"))
   );
-  const selectedVariantValue =
-    controlledVariant !== undefined ? controlledVariant : internalVariant;
-  const setSelectedVariantValue =
-    onSelectVariant ?? setInternalVariant;
+  const sizeOptionsAll = Array.from(
+    new Set(variants.map((v) => v.sizeValue).filter((v) => v !== "os"))
+  );
+
+  const needsColor = colorOptions.length > 1;
+  const needsSize = sizeOptionsAll.length > 1;
+
+  const [selectedColorValue, setSelectedColorValue] = useState<string | null>(
+    colorOptions.length > 0 ? colorOptions[0] : "default"
+  );
+  const [selectedSizeValue, setSelectedSizeValue] = useState<string | null>(
+    needsSize ? null : "os"
+  );
   const [quantity, setQuantity] = useState(1);
-  const [selectedSize, setSelectedSize] = useState<string | null>(null);
+
+  // Keep compatibility with the previous controlled prop shape (selectedVariantValue),
+  // but interpret it as a selected *color* value now.
+  const effectiveColorValue =
+    controlledVariant !== undefined ? controlledVariant : selectedColorValue;
+  const setEffectiveColorValue = onSelectVariant ?? setSelectedColorValue;
+
+  const variantsForSelectedColor = variants.filter(
+    (v) => v.colorValue === (effectiveColorValue ?? "default")
+  );
+  const sizeOptionsForColor = Array.from(
+    new Map(
+      variantsForSelectedColor.map((v) => [
+        v.sizeValue,
+        { value: v.sizeValue, name: v.sizeName },
+      ])
+    ).values()
+  ).filter((s) => s.value !== "os");
 
   const selectedVariant: ProductVariant | null =
-    selectedVariantValue
-      ? product.variants.find((v) => v.value === selectedVariantValue) || null
-      : null;
+    variants.find(
+      (v) =>
+        v.colorValue === (effectiveColorValue ?? "default") &&
+        v.sizeValue === (selectedSizeValue ?? "os")
+    ) ?? null;
 
   const maxQuantity = selectedVariant
     ? selectedVariant.stockQty
@@ -40,20 +70,31 @@ export default function ProductDetailClient({
   return (
     <div className="flex flex-col gap-6">
       {/* Color Selector */}
-      {product.variants.length > 0 && (
+      {variants.length > 0 && (
         <ColorSelector
-          variants={product.variants}
-          selectedValue={selectedVariantValue}
-          onSelect={setSelectedVariantValue}
+          variants={variants}
+          selectedValue={effectiveColorValue}
+          onSelect={(value) => {
+            setEffectiveColorValue(value);
+            if (needsSize) setSelectedSizeValue(null);
+          }}
         />
       )}
 
-      {/* Size Selector (hoodies only for now) */}
-      {product.slug === "embossed-hoodie-2-0" && (
+      {/* Size Selector */}
+      {needsSize && (
         <SizeSelector
-          sizes={["S", "M", "L", "XL"]}
-          selectedSize={selectedSize}
-          onSelect={setSelectedSize}
+          sizes={sizeOptionsForColor.map((s) => s.name)}
+          selectedSize={
+            selectedSizeValue
+              ? variantsForSelectedColor.find((v) => v.sizeValue === selectedSizeValue)
+                  ?.sizeName ?? null
+              : null
+          }
+          onSelect={(sizeName) => {
+            const match = variantsForSelectedColor.find((v) => v.sizeName === sizeName);
+            setSelectedSizeValue(match?.sizeValue ?? null);
+          }}
         />
       )}
 
@@ -70,7 +111,8 @@ export default function ProductDetailClient({
         product={product}
         selectedVariant={selectedVariant}
         quantity={quantity}
-        selectedSize={selectedSize}
+        needsColor={needsColor}
+        needsSize={needsSize}
       />
 
     </div>

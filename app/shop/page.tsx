@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 };
 
 export default async function ShopPage() {
-  let products;
+  let products: Awaited<ReturnType<typeof getAllProducts>> = [];
   let error: string | null = null;
 
   try {
@@ -16,7 +16,6 @@ export default async function ShopPage() {
   } catch (err) {
     console.error("Error fetching products:", err);
     error = err instanceof Error ? err.message : "Failed to load products";
-    products = [];
   }
 
   return (

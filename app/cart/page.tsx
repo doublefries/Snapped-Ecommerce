@@ -110,11 +110,11 @@ export default function CartPage() {
                   <h3 className="font-semibold text-lg uppercase">
                     {item.productName}
                   </h3>
-                  {item.variantName && (
-                    <p className="text-sm text-gray-600">Color: {item.variantName}</p>
+                  {item.colorName && item.colorValue !== "default" && (
+                    <p className="text-sm text-gray-600">Color: {item.colorName}</p>
                   )}
-                  {item.size && (
-                    <p className="text-sm text-gray-600">Size: {item.size}</p>
+                  {item.sizeName && item.sizeValue !== "os" && (
+                    <p className="text-sm text-gray-600">Size: {item.sizeName}</p>
                   )}
                   <p className="text-lg font-bold mt-2">
                     {formatPrice(item.price)}

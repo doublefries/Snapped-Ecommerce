@@ -32,7 +32,7 @@ export default function CheckoutCancelPage() {
             Your payment was cancelled. No charges have been made.
           </p>
           <p className="text-gray-600">
-            Your items are still in your cart if you'd like to try again.
+            Your items are still in your cart if you&apos;d like to try again.
           </p>
         </div>
 

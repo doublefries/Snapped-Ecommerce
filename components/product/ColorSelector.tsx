@@ -13,25 +13,31 @@ export default function ColorSelector({
   selectedValue,
   onSelect,
 }: ColorSelectorProps) {
-  if (variants.length === 0) {
-    return null;
-  }
+  const colors = Array.from(
+    new Map(
+      variants
+        .filter((v) => v.colorValue !== "default")
+        .map((v) => [v.colorValue, { value: v.colorValue, name: v.colorName }])
+    ).values()
+  );
+
+  if (colors.length <= 1) return null;
 
   return (
     <div className="flex flex-col gap-3">
       <label className="text-sm font-medium uppercase">COLOR</label>
       <div className="flex gap-3">
-        {variants.map((variant) => (
+        {colors.map((color) => (
           <button
-            key={variant.id}
-            onClick={() => onSelect(variant.value)}
+            key={color.value}
+            onClick={() => onSelect(color.value)}
             className={`px-4 py-2 border-2 uppercase text-sm font-medium transition-colors ${
-              selectedValue === variant.value
+              selectedValue === color.value
                 ? "bg-black text-white border-black"
                 : "bg-white text-black border-black hover:bg-gray-100"
             }`}
           >
-            {variant.name}
+            {color.name}
           </button>
         ))}
       </div>

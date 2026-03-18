@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback } from "react";
 import { Product } from "@/lib/types";
 import ProductImage from "./ProductImage";
 import ProductDetailClient from "./ProductDetailClient";
@@ -26,15 +26,13 @@ export default function ProductDetailLayout({
   product,
 }: ProductDetailLayoutProps) {
   const firstVariantValue =
-    product.variants.length > 0 ? product.variants[0].value : null;
+    product.variants.length > 0 ? product.variants[0].colorValue : null;
   const [selectedVariantValue, setSelectedVariantValue] = useState<
     string | null
   >(firstVariantValue);
-  const initialImageIndex = useMemo(
-    () => getInitialImageIndex(product, firstVariantValue),
-    [product.images, product.variantImages, firstVariantValue]
+  const [selectedImageIndex, setSelectedImageIndex] = useState(() =>
+    getInitialImageIndex(product, firstVariantValue)
   );
-  const [selectedImageIndex, setSelectedImageIndex] = useState(initialImageIndex);
 
   const handleSelectImageIndex = useCallback((index: number) => {
     setSelectedImageIndex(index);
@@ -61,8 +59,6 @@ export default function ProductDetailLayout({
         <ProductImage
           images={product.images}
           productName={product.name}
-          variantImages={product.variantImages}
-          selectedVariantValue={selectedVariantValue}
           selectedImageIndex={selectedImageIndex}
           onSelectImageIndex={handleSelectImageIndex}
         />

@@ -5,8 +5,6 @@ import Image from "next/image";
 interface ProductImageProps {
   images: string[];
   productName: string;
-  variantImages?: Record<string, string> | null;
-  selectedVariantValue?: string | null;
   selectedImageIndex: number;
   onSelectImageIndex: (index: number) => void;
 }
@@ -14,8 +12,6 @@ interface ProductImageProps {
 export default function ProductImage({
   images,
   productName,
-  variantImages,
-  selectedVariantValue,
   selectedImageIndex,
   onSelectImageIndex,
 }: ProductImageProps) {
@@ -27,10 +23,7 @@ export default function ProductImage({
     );
   }
 
-  const mainImageUrl =
-    selectedVariantValue && variantImages?.[selectedVariantValue]
-      ? variantImages[selectedVariantValue]
-      : images[selectedImageIndex];
+  const mainImageUrl = images[selectedImageIndex];
   const mainUnoptimized = /^https?:\/\//.test(mainImageUrl);
 
   return (

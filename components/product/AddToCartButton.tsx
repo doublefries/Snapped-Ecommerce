@@ -10,43 +10,43 @@ interface AddToCartButtonProps {
   product: Product;
   selectedVariant: ProductVariant | null;
   quantity: number;
-  selectedSize?: string | null;
+  needsColor?: boolean;
+  needsSize?: boolean;
 }
 
 export default function AddToCartButton({
   product,
   selectedVariant,
   quantity,
-  selectedSize,
+  needsColor = false,
+  needsSize = false,
 }: AddToCartButtonProps) {
   const [isAdding, setIsAdding] = useState(false);
   const addItem = useCartStore((state) => state.addItem);
   const router = useRouter();
 
   const handleAddToCart = () => {
-    if (product.variants.length > 0 && !selectedVariant) {
-      alert("Please select a color");
-      return;
-    }
-
-    if (product.slug === "embossed-hoodie-2-0" && !selectedSize) {
-      alert("Please select a size");
+    if ((needsColor || needsSize) && !selectedVariant) {
+      if (needsColor && needsSize) alert("Please select a color and size");
+      else if (needsColor) alert("Please select a color");
+      else alert("Please select a size");
       return;
     }
 
     setIsAdding(true);
 
     // Generate unique cart item ID
-    const cartItemId = `${product.id}-${selectedVariant?.value || "default"}-${
-      selectedSize || "nosize"
-    }`;
+    const cartItemId = `${product.id}-${selectedVariant?.id ?? "default"}`;
 
     addItem({
       id: cartItemId,
       productId: product.id,
       productName: product.name,
-      variantName: selectedVariant?.name,
-      size: selectedSize || undefined,
+      variantId: selectedVariant?.id,
+      colorName: selectedVariant?.colorName,
+      colorValue: selectedVariant?.colorValue,
+      sizeName: selectedVariant?.sizeName,
+      sizeValue: selectedVariant?.sizeValue,
       price: Number(product.salePrice ?? product.price),
       quantity,
       image: product.images[0] || "",
