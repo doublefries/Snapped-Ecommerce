@@ -20,7 +20,9 @@ export const useCartStore = create<CartStore>()(
       items: [],
       addItem: (item) => {
         const existingItem = get().items.find(
-          (i) => i.productId === item.productId && i.variantName === item.variantName
+          (i) =>
+            i.productId === item.productId &&
+            i.variantId === item.variantId
         );
 
         if (existingItem) {

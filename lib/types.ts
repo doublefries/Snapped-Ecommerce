@@ -4,7 +4,11 @@ export type CartItem = {
   id: string;
   productId: string;
   productName: string;
-  variantName?: string;
+  variantId?: string;
+  colorName?: string;
+  colorValue?: string;
+  sizeName?: string;
+  sizeValue?: string;
   price: number;
   quantity: number;
   image: string;
@@ -30,8 +34,10 @@ export type Product = {
 export type ProductVariant = {
   id: string;
   productId: string;
-  name: string;
-  value: string;
+  colorName: string;
+  colorValue: string;
+  sizeName: string;
+  sizeValue: string;
   stockQty: number;
   createdAt: Date;
 };
@@ -42,7 +48,7 @@ export type Order = {
   email: string;
   total: number;
   status: OrderStatus;
-  shippingAddress: Record<string, any> | null;
+  shippingAddress: Record<string, unknown> | null;
   items: OrderItem[];
   createdAt: Date;
   updatedAt: Date;

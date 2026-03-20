@@ -32,12 +32,16 @@ model ProductVariant {
   id        String   @id @default(cuid())
   productId String
   product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
-  name      String   // e.g., "NAVY", "BROWN", "BLACK", "PINK"
-  value     String   // e.g., "navy", "brown"
+  colorName  String   @default("DEFAULT") // e.g., "NAVY" (or "DEFAULT" for non-color products)
+  colorValue String   @default("default") // e.g., "navy" (or "default" for non-color products)
+  sizeName   String   @default("OS") // e.g., "S", "M", "L", "XL" (or "OS" for one-size)
+  sizeValue  String   @default("os") // e.g., "s", "m", "l", "xl" (or "os" for one-size)
   stockQty  Int      @default(0)
   createdAt DateTime @default(now())
   
-  @@unique([productId, value])
+  @@unique([productId, colorValue, sizeValue])
+  @@index([productId, colorValue])
+  @@index([productId, sizeValue])
 }
 
 model Order {
