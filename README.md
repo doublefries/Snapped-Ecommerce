@@ -1,4 +1,4 @@
-# Custom E-commerce Store for Snapped Streetwear
+# Custom E-Commerce Store for Snapped Streetwear
 
 A modern, full-stack e-commerce platform built with Next.js, featuring Stripe payment integration and a "streetwear"-style, minimalist design. This project was used as both a learning experience and to replace my current Shopify solution that was expensive and lacked uniqueness. The final project aims to demonstrate best practices in React Server Components, state management, and payment processing.
 
