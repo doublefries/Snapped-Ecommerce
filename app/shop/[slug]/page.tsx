@@ -3,6 +3,8 @@ import { getProductBySlug } from "@/lib/db/queries";
 import ProductDetailLayout from "@/components/product/ProductDetailLayout";
 import type { Metadata } from "next";
 
+export const revalidate = 300;
+
 interface ProductPageProps {
   params: Promise<{ slug: string }>;
 }

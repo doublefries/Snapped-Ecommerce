@@ -96,6 +96,7 @@ export default function CartPage() {
                     alt={item.productName}
                     fill
                     className="object-cover"
+                    sizes="96px"
                   />
                 ) : (
                   <div className="w-full h-full bg-gray-100 flex items-center justify-center text-gray-400 text-xs">

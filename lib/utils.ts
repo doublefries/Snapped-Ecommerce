@@ -21,3 +21,7 @@ export function formatDate(date: Date | string): string {
     day: "numeric",
   }).format(dateObj);
 }
+
+export function isNonOptimizableImageSrc(src: string): boolean {
+  return src.startsWith("data:") || src.startsWith("blob:");
+}

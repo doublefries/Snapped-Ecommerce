@@ -7,6 +7,9 @@ export const metadata: Metadata = {
   description: "Browse all products from Snapped - Premium apparel and accessories",
 };
 
+// caching catalog HTML to reduce DB reads on Vercel
+export const revalidate = 300;
+
 export default async function ShopPage() {
   let products: Awaited<ReturnType<typeof getAllProducts>> = [];
   let error: string | null = null;

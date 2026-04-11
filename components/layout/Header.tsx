@@ -4,11 +4,16 @@ import Link from "next/link";
 import Image from "next/image";
 import { ShoppingBag, Menu, X } from "lucide-react";
 import { useCartStore } from "@/lib/store/cart-store";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function Header() {
   const totalItems = useCartStore((state) => state.getTotalItems());
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [hasMounted, setHasMounted] = useState(false);
+
+  useEffect(() => {
+    setHasMounted(true);
+  }, []);
 
   return (
     <header className="border-b border-black">
@@ -57,7 +62,7 @@ export default function Header() {
             onClick={() => setIsMobileMenuOpen(false)}
           >
             <ShoppingBag className="w-6 h-6" />
-            {totalItems > 0 && (
+            {hasMounted && totalItems > 0 && (
               <span className="absolute -top-2 -right-1 bg-black text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
                 {totalItems}
               </span>

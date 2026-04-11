@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { isNonOptimizableImageSrc } from "@/lib/utils";
 
 interface ProductImageProps {
   images: string[];
@@ -24,7 +25,6 @@ export default function ProductImage({
   }
 
   const mainImageUrl = images[selectedImageIndex];
-  const mainUnoptimized = /^https?:\/\//.test(mainImageUrl);
 
   return (
     <div className="flex flex-col gap-4">
@@ -38,7 +38,7 @@ export default function ProductImage({
           priority
           sizes="(min-width: 1024px) 50vw, 100vw"
           quality={85}
-          unoptimized={mainUnoptimized}
+          unoptimized={isNonOptimizableImageSrc(mainImageUrl)}
         />
       </div>
 
@@ -61,7 +61,7 @@ export default function ProductImage({
                 className="object-cover"
                 sizes="64px"
                 quality={60}
-                unoptimized={/^https?:\/\//.test(image)}
+                unoptimized={isNonOptimizableImageSrc(image)}
               />
             </button>
           ))}

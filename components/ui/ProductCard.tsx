@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Product } from "@/lib/types";
-import { formatPrice } from "@/lib/utils";
+import { formatPrice, isNonOptimizableImageSrc } from "@/lib/utils";
 
 interface ProductCardProps {
   product: Product;
@@ -14,8 +14,8 @@ export default function ProductCard({ product }: ProductCardProps) {
   const hasSale = product.salePrice !== null;
   const coverUrl = Array.isArray(product.images) && product.images.length > 0 ? product.images[0] : null;
   const hoverUrl = Array.isArray(product.images) && product.images.length > 1 ? product.images[1] : null;
-  const coverUnoptimized = !!coverUrl && /^https?:\/\//.test(coverUrl);
-  const hoverUnoptimized = !!hoverUrl && /^https?:\/\//.test(hoverUrl);
+  const coverUnoptimized = !!coverUrl && isNonOptimizableImageSrc(coverUrl);
+  const hoverUnoptimized = !!hoverUrl && isNonOptimizableImageSrc(hoverUrl);
 
   return (
     <Link href={`/shop/${product.slug}`} className="group">
