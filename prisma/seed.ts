@@ -138,6 +138,7 @@ async function main() {
       inStock: true,
       stockQty: 30,
       variants: buildVariants({
+        colors: [{ name: "DEFAULT", value: "default", stockQty: 30 }],
         sizes: [{ name: "OS", value: "os" }],
       }),
     },
@@ -158,6 +159,7 @@ async function main() {
       inStock: true,
       stockQty: 30,
       variants: buildVariants({
+        colors: [{ name: "DEFAULT", value: "default", stockQty: 30 }],
         sizes: [{ name: "OS", value: "os" }],
       }),
     },
@@ -178,6 +180,7 @@ async function main() {
       inStock: true,
       stockQty: 40,
       variants: buildVariants({
+        colors: [{ name: "DEFAULT", value: "default", stockQty: 40 }],
         sizes: [
           { name: "S", value: "s" },
           { name: "M", value: "m" },
