@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { stripe } from "@/lib/stripe";
 import { getProductById } from "@/lib/db/queries";
 import { CartItem } from "@/lib/types";
+import Stripe from "stripe";
 
 export async function POST(request: NextRequest) {
   try {
@@ -72,6 +73,19 @@ export async function POST(request: NextRequest) {
       })
     );
 
+    // Dashboard shipping rates are not auto-applied; pass each `shr_...` here.
+    // Currency on the rate must match line items (this app uses `cad`).
+    const shippingOptions: Stripe.Checkout.SessionCreateParams.ShippingOption[] = [];
+    const rateIds = [
+      process.env.STRIPE_SHIPPING_RATE_STANDARD,
+      process.env.STRIPE_SHIPPING_RATE_PICKUP,
+      process.env.STRIPE_SHIPPING_RATE_EXTRA,
+    ].filter((id): id is string => Boolean(id && id.startsWith("shr_")));
+
+    for (const shipping_rate of rateIds) {
+      shippingOptions.push({ shipping_rate });
+    }
+
     // Create Stripe Checkout Session
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
@@ -80,6 +94,14 @@ export async function POST(request: NextRequest) {
       success_url: `${process.env.NEXT_PUBLIC_APP_URL}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/checkout/cancel`,
       customer_email: email,
+      ...(shippingOptions.length > 0
+        ? {
+            shipping_address_collection: {
+              allowed_countries: ["CA", "US"],
+            },
+            shipping_options: shippingOptions,
+          }
+        : {}),
       metadata: {
         // Store cart items in metadata for webhook processing
         cartItems: JSON.stringify(items),
