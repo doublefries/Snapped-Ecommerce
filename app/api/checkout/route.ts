@@ -124,6 +124,10 @@ export async function POST(request: NextRequest) {
                     ? `${product.name} - ${item.sizeName}`
                     : product.name,
               images,
+              metadata: {
+                product_id: item.productId,
+                ...(item.variantId ? { variant_id: item.variantId } : {}),
+              },
             },
             unit_amount: Math.round(price * 100), // Convert to cents
           },
@@ -156,10 +160,6 @@ export async function POST(request: NextRequest) {
             shipping_options: shippingOptions,
           }
         : {}),
-      metadata: {
-        // Store cart items in metadata for webhook processing
-        cartItems: JSON.stringify(items),
-      },
     });
 
     return NextResponse.json({
