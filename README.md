@@ -1,5 +1,7 @@
 # Custom E-Commerce Store for Snapped Streetwear
 
+![snappedstreetwear.com landing page](images/landingpage.png)
+
 After years of paying for an extremely expensive Shopify subscription, of which I used
 probably 5% of the included features, I decided to free my wallet and take a
 crack at building my own E-Commerce solution. Does it have all the features Shopify has?
